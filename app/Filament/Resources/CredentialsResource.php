@@ -49,10 +49,12 @@ class CredentialsResource extends Resource
                 $query->where('user_id', Auth::id());
             })
             ->columns([
-                TextColumn::make("user.name"),
-                TextColumn::make("platform"),
-                TextColumn::make("username"),
-                TextColumn::make("email"),
+                TextColumn::make("platform")
+                    ->searchable(),
+                TextColumn::make("username")
+                    ->searchable(),
+                TextColumn::make("email")
+                    ->searchable(),
             ])
             ->filters([
                 //

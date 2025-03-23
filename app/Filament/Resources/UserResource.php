@@ -16,6 +16,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class UserResource extends Resource
@@ -49,18 +50,22 @@ class UserResource extends Resource
         return $table
             ->columns([
                 TextColumn::make("id"),
-                TextColumn::make("name")
+                TextColumn::make("name"),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label("")
+                    ->hidden(fn ($record) => $record->id !== Auth::id()),
+                Tables\Actions\DeleteAction::make()
+                    ->label("")
+                    ->requiresConfirmation()
+                    ->hidden(fn ($record) => $record->id !== Auth::id()),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                //
             ]);
     }
 
