@@ -38,11 +38,7 @@ class UserResource extends Resource
                         TextInput::make("password")
                             ->required()
                             ->password()
-                            ->rules(fn (): Closure => function(string $attribute, $value, Closure $fail) {
-                                Log::debug($attribute);
-                                Log::debug($value);
-                            })
-                            ->columnSpanFull()                            
+                            ->columnSpanFull()
                     ])
                     ->columns(2),
             ]);

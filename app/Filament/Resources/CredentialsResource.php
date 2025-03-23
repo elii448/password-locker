@@ -20,6 +20,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
 
@@ -44,13 +45,14 @@ class CredentialsResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $query->where('user_id', Auth::id());
+            })
             ->columns([
                 TextColumn::make("user.name"),
                 TextColumn::make("platform"),
                 TextColumn::make("username"),
-                TextColumn::make("email")
-                    ->copyable()
-                    ->copyableState(fn (string $state): string => "URL: {$state}"),
+                TextColumn::make("email"),
             ])
             ->filters([
                 //
@@ -62,14 +64,11 @@ class CredentialsResource extends Resource
                     ->label("")
                     ->tooltip("Copy password")
                     ->action(function ($record, $livewire) {
-                        // Show a notification
                         $livewire->js("await navigator.clipboard.writeText('{$record->password}');");
                         Notification::make()
                             ->title('Password copied to clipboard')
                             ->success()
                             ->send();
-
-                        return $record->password;
                     })
             ])
             ->bulkActions([
